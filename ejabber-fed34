@@ -1,0 +1,126 @@
+sudo yum -y update
+Once updated perform a reboot.
+
+sudo reboot
+Step 2: Download ejabberd RPM Package
+Install Development tools on Amazon Linux 2 server:
+
+sudo yum groupinstall -y "Development Tools"
+Ejabberd package is provided from RPM based Linux operating systems. When installing from the package it will check dependencies and performs basic configuration tasks like creating the initial administrator account.
+
+EJ_VERSION=20.12
+wget https://static.process-one.net/ejabberd/downloads/${EJ_VERSION}/ejabberd-${EJ_VERSION}-0.x86_64.rpm
+Step 3: Install ejabberd on Amazon Linux 2
+Now that the package has been downloaded let’s install it using the following commands:
+
+sudo yum localinstall ejabberd-${EJ_VERSION}-0.x86_64.rpm
+Accept installation prompt:
+
+Dependencies Resolved
+
+==================================================================================================================================================================
+ Package                            Arch                             Version                             Repository                                          Size
+==================================================================================================================================================================
+Installing:
+ ejabberd                           x86_64                           20.12-0                             /ejabberd-20.12-0.x86_64                            29 M
+
+Transaction Summary
+==================================================================================================================================================================
+Install  1 Package
+
+Total size: 29 M
+Installed size: 29 M
+Is this ok [y/d/N]: y
+The init script is placed in /etc/init.d directory:
+
+$ ls /etc/init.d/ejabberd
+/etc/init.d/ejabberd
+Ejabberd application directory is:
+
+$ ls /opt/ejabberd
+conf  database  logs
+Step 3: Start ejabberd systemd service on Amazon Linux 2
+Copy systemd unit file of ejabberd to /etc/systemd/system directory:
+
+sudo cp $(sudo find / -name ejabberd.service) /etc/systemd/system
+Reload systemd:
+
+sudo systemctl daemon-reload
+Start the service and enable it to start on boot:
+
+sudo systemctl start ejabberd
+sudo systemctl enable ejabberd
+Check to confirm the service was started successfully.
+
+$ systemctl status ejabberd
+● ejabberd.service - XMPP Server
+   Loaded: loaded (/etc/systemd/system/ejabberd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sat 2021-01-16 09:22:39 UTC; 19s ago
+   CGroup: /system.slice/ejabberd.service
+           ├─2626 /opt/ejabberd-20.12/bin/epmd -daemon
+           ├─2627 /opt/ejabberd-20.12/bin/beam.smp -K true -P 250000 -- -root /opt/ejabberd-20.12 -progname /opt/ejabberd-20.12/bin/erl -- -home /opt/ejabberd ...
+           ├─2634 erl_child_setup 65536
+           └─2701 /opt/ejabberd-20.12/lib/os_mon-2.4.7/priv/bin/memsup
+
+Jan 16 09:22:33 amazon-linux systemd[1]: Starting XMPP Server...
+Jan 16 09:22:39 amazon-linux systemd[1]: Started XMPP Server.
+Step 4: Add ejabberdctl command location to your PATH
+Locate ejabberdctl binary file:
+
+$ sudo find / -name ejabberdctl
+/opt/ejabberd-20.12/bin/ejabberdctl
+Add the path of to your .bashrc file.
+
+$ sudo su -
+$ vi ~/.bashrc
+Update PATH:
+
+export PATH=$PATH:/opt/ejabberd-20.12/bin
+Source your bashrc file to update settings.
+
+source ~/.bashrc
+Step 5: Add an Admin user to Ejabberd
+Once Ejabberd is installed and configured you’ll need to add an initial admin user for administrative purposes.
+
+# ejabberdctl register myadmin $(hostname) StrongAdminPassword
+Where:
+
+myadmin – Is the name of the admin user to be created
+StrongAdminPassword is the password for the myadmin user created.
+Expected command execution output:
+
+User myadmin@amazon-linux successfully registered
+You can now edit the ejabberd configuration file and give the user we just added administration rights to the XMPP account.
+
+The user syntax is:
+
+"username@servername"
+Get your machine hostname:
+
+$ hostname
+amazon-linux
+Edit ejabberd configuration acl section:
+
+$ sudo vi /opt/ejabberd/conf/ejabberd.yml
+.....
+acl:
+  local:
+    user_regexp: ""
+  loopback:
+    ip:
+      - 127.0.0.0/8
+      - ::1/128
+      - ::FFFF:127.0.0.1/128
+  admin:
+    user:
+      - "admin@amazon-linux"
+      - "myadmin@amazon-linux" # Added line
+Restart the ejabberd service after making the changes:
+
+sudo systemctl restart ejabberd
+Step 6: Access ejabberd Web Admin
+Ejabberd admin console can be accessed on below URL:
+
+http://[server_ip_address_or_hostname]:5280/admin/
+Login with the username and password as created earlier.
+
