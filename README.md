@@ -50,6 +50,7 @@ For configuring ejabberd to control which services are allowed visit https://doc
 
 # Install Ejabberd
 Docker compose file
+
 Create /env/common.env file include :
 
 ```
@@ -63,8 +64,9 @@ EJABBERD_PROTOCOL_OPTIONS_TLSV1_1=false
 XMPP_DOMAIN=localhost localhost1 localhost2 localhost3
 EJABBERD_ADMINS=admin@localhost admin@localhost1 admin@localhost2 admin@localhost3
 EJABBERD_USERS=admin@localhost:password admin@localhost1:password admin@localhost2:password admin@localhost3:password bss1@localhost:password bss2@localhost:password bss1@localhost1:password bss2@localhost2:password bss1@localhost3:password bss2@localhost3:password
-Create /env/common.module file include :
 
+
+Create /env/common.module file include :
 ## MODULES
 EJABBERD_MOD_OAUTH_ENABLE=true
 EJABBERD_MOD_OAUTH_PREFIX=/oauth
@@ -76,8 +78,9 @@ EJABBERD_REGISTER_ADMIN_ONLY=true
 EJABBERD_MOD_MAM=true
 EJABBERD_SKIP_MODULES_UPDATE=false
 EJABBERD_RESTART_AFTER_MODULE_INSTALL=true
-Create /env/mysql.module file include :
 
+
+Create /env/mysql.module file include :
 ## MYSQL
 EJABBERD_AUTH_METHOD=sql
 EJABBERD_CONFIGURE_SQL=true
@@ -90,6 +93,8 @@ EJABBERD_SQL_USERNAME=root
 EJABBERD_SQL_PASSWORD=hoanggia3116
 EJABBERD_SQL_POOL_SIZE=10
 EJABBERD_SQL_PORT=3306
+
+
 Create docker-compose.yml file include : * use mysql db * ejabberd admin page * port expose
 
 5222
