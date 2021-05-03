@@ -48,10 +48,10 @@ For configuring ejabberd to control which services are allowed visit https://doc
 
 ---------------------------------------------------------------------------------------------------------------------
 
-```
-# Install Ejabberd
-Docker compose file
 
+# Install Ejabberd
+```
+Docker compose file
 
 Create /env/common.env file include :
 
