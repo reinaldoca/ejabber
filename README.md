@@ -1,4 +1,4 @@
-# ejabber
+# Ejabber
 
 Before you build amazing things with xmpp you need to first setup the server !!!
 Ejabberd, Prosody and Openfire are some of the famous xmpp server. All are great here we are going to use ejabberd as our xmpp server.
